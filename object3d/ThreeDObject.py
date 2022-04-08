@@ -1,6 +1,6 @@
 import random
 
-from PySide2.QtGui import (QVector3D, QColor, qRgb)
+from PySide2.QtGui import (QVector3D, QColor, QQuaternion, qRgb)
 from PySide2.Qt3DExtras import (Qt3DExtras)
 from PySide2.Qt3DCore import (Qt3DCore)
 
@@ -30,6 +30,18 @@ class ThreeDObject():
     def updateName(self, name):
         self.name = name
         if self.onNameChange != None: self.onNameChange(name)
+
+    def getTranslation(self):
+        return self.transform.translation()
+
+    def setTranslation(self, x, y, z):
+        self.transform.setTranslation(QVector3D(x, y, z))
+
+    def getOrientation(self):
+        return [self.transform.rotationX(), self.transform.rotationY(), self.transform.rotationZ()]
+
+    def setOrientation(self, r, p, y):
+        self.transform.setRotation(QQuaternion.fromEulerAngles(p, y, r))
 
     def __str__(self):
         return self.name

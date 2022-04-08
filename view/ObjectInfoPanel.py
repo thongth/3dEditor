@@ -22,6 +22,9 @@ class ObjectInfoPanel(QWidget):
         self.translationInputX = QLineEdit()
         self.translationInputY = QLineEdit()
         self.translationInputZ = QLineEdit()
+        self.translationInputX.textEdited.connect(self.onTranslationChange)
+        self.translationInputY.textEdited.connect(self.onTranslationChange)
+        self.translationInputZ.textEdited.connect(self.onTranslationChange)
         self.translationLayout.addWidget(self.translationLabel)
         self.translationLayout.addWidget(self.translationInputX)
         self.translationLayout.addWidget(self.translationInputY)
@@ -33,6 +36,9 @@ class ObjectInfoPanel(QWidget):
         self.orientationInputR = QLineEdit()
         self.orientationInputP = QLineEdit()
         self.orientationInputY = QLineEdit()
+        self.orientationInputR.textEdited.connect(self.onOrientationChange)
+        self.orientationInputP.textEdited.connect(self.onOrientationChange)
+        self.orientationInputY.textEdited.connect(self.onOrientationChange)
         self.orientationLayout.addWidget(self.orientationLabel)
         self.orientationLayout.addWidget(self.orientationInputR)
         self.orientationLayout.addWidget(self.orientationInputP)
@@ -44,6 +50,7 @@ class ObjectInfoPanel(QWidget):
         self.radiusInput = QSlider(Qt.Horizontal)
         self.radiusInput.setMinimum(1)
         self.radiusInput.setMaximum(10)
+        self.radiusInput.sliderMoved.connect(self.onRadiusChange)
         self.radiusLayout.addWidget(self.radiusLabel)
         self.radiusLayout.addWidget(self.radiusInput)
 
@@ -63,9 +70,30 @@ class ObjectInfoPanel(QWidget):
             self.setBlank()
             return
         self.nameInput.setText(object.name)
+        self.translationInputX.setText(str(object.getTranslation().x()))
+        self.translationInputY.setText(str(object.getTranslation().y()))
+        self.translationInputZ.setText(str(object.getTranslation().z()))
+        [rX, rY, rZ] = object.getOrientation()
+        self.orientationInputP.setText(str(rX))
+        self.orientationInputY.setText(str(rY))
+        self.orientationInputR.setText(str(rZ))
+        self.radiusInput.setValue(int(object.getRadius()))
 
     def setBlank(self):
         self.nameInput.setText('')
 
     def onNameChange(self, s):
         self.selectedObject.updateName(s)
+
+    def onTranslationChange(self, s):
+        self.selectedObject.setTranslation(float(self.translationInputX.text()), 
+                                        float(self.translationInputY.text()),
+                                        float(self.translationInputZ.text()))
+    
+    def onOrientationChange(self, s):
+        self.selectedObject.setOrientation(float(self.orientationInputR.text()), 
+                                        float(self.orientationInputP.text()),
+                                        float(self.orientationInputY.text()))
+
+    def onRadiusChange(self, r):
+        self.selectedObject.setRadius(r)

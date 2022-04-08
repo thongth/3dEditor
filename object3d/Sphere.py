@@ -12,3 +12,9 @@ class Sphere(ThreeDObject):
         self.sphereMesh = Qt3DExtras.QSphereMesh()
 
         self.entity.addComponent(self.sphereMesh)
+
+    def getRadius(self):
+        return self.sphereMesh.radius()
+
+    def setRadius(self, r):
+        self.sphereMesh.setRadius(r)
