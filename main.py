@@ -66,7 +66,7 @@ class MainWindow(QMainWindow):
     def removeObject(self):
         toRemove = self.getIndexFromObjectName(self.selectedObject)
         if toRemove != -1:
-            self.objects[toRemove].setParent()
+            self.objects[toRemove].setParent(None)
             self.objects.pop(toRemove)
             self.selectedObject = None
             self.objectListPanel.updateList(self.objects)
