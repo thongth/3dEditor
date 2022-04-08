@@ -1,15 +1,9 @@
-from email.charset import QP
 import sys
-import random
 
 from PySide2.QtWidgets import (QApplication, QMainWindow, QHBoxLayout, QVBoxLayout, QWidget, QPushButton)
-from PySide2.QtCore import(Property, QObject, QPropertyAnimation, Signal)
-from PySide2.QtGui import (QMatrix4x4, QQuaternion, QVector3D, QColor, qRgb)
-from PySide2.Qt3DCore import (Qt3DCore)
-from PySide2.Qt3DExtras import (Qt3DExtras)
 
-from view import ThreeDViewer, ObjectListPanel, ObjectInfoPanel
-from object3d import Sphere
+from view import (ThreeDViewer, ObjectListPanel, ObjectInfoPanel)
+from object3d import (Sphere, Box)
 class MainWindow(QMainWindow):
     def __init__(self):
         super(MainWindow, self).__init__()
@@ -24,7 +18,6 @@ class MainWindow(QMainWindow):
         self.setWindowTitle("3d Editor")
 
         self.threeDViewer = ThreeDViewer()
-        self.threeDViewer.defaultFrameGraph().setClearColor(QColor(qRgb(255,221,153)))
         self.container = QWidget.createWindowContainer(self.threeDViewer)
         self.container.setMinimumSize(1200, 800)
         self.rootEntity = self.threeDViewer.rootEntity
@@ -33,15 +26,18 @@ class MainWindow(QMainWindow):
         configLayout = QVBoxLayout()
         buttonBar = QHBoxLayout()
 
-        self.newObjectButton = QPushButton('New Object')
-        self.newObjectButton.clicked.connect(self.addSphere)
+        self.newSphereButton = QPushButton('New Sphere')
+        self.newSphereButton.clicked.connect(self.addSphere)
+        self.newBoxButton = QPushButton('New Box')
+        self.newBoxButton.clicked.connect(self.addBox)
         self.removeObjectButton = QPushButton('Remove Object')
         self.removeObjectButton.clicked.connect(self.removeObject)
 
         self.objectListPanel = ObjectListPanel(self.selectObject)
         self.objectInfoPanel = ObjectInfoPanel()
 
-        buttonBar.addWidget(self.newObjectButton)
+        buttonBar.addWidget(self.newSphereButton)
+        buttonBar.addWidget(self.newBoxButton)
         buttonBar.addWidget(self.removeObjectButton)
 
         configLayout.addLayout(buttonBar)
@@ -66,9 +62,16 @@ class MainWindow(QMainWindow):
     def updateListPanel(self):
         self.objectListPanel.updateList(self.objects)
 
-    def addSphere(self, radius=3):
-        sphere = Sphere(self.rootEntity, 'sphere' + str(self.maxObjectNumber), radius, self.onObjectNameChange)
-        self.objects.append(sphere)
+    def addSphere(self):
+        sphere = Sphere(self.rootEntity, 'sphere' + str(self.maxObjectNumber), self.onObjectNameChange)
+        self.updateMeshOnScreen(sphere)
+
+    def addBox(self):
+        box = Box(self.rootEntity, 'box' + str(self.maxObjectNumber), self.onObjectNameChange)
+        self.updateMeshOnScreen(box)
+
+    def updateMeshOnScreen(self, mesh):
+        self.objects.append(mesh)
         self.updateListPanel()
         self.maxObjectNumber += 1
 

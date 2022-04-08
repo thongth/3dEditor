@@ -1,6 +1,6 @@
 from PySide2.Qt3DCore import (Qt3DCore)
 from PySide2.Qt3DExtras import (Qt3DExtras)
-from PySide2.QtGui import (QVector3D)
+from PySide2.QtGui import (QVector3D, QColor, qRgb)
 from PySide2.Qt3DRender import (Qt3DRender)
 
 class ThreeDViewer(Qt3DExtras.Qt3DWindow):
@@ -29,3 +29,6 @@ class ThreeDViewer(Qt3DExtras.Qt3DWindow):
         self.lightTransform = Qt3DCore.QTransform(self.lightEntity)
         self.lightTransform.setTranslation(self.camera().position())
         self.lightEntity.addComponent(self.lightTransform)
+
+        # Background
+        self.defaultFrameGraph().setClearColor(QColor(qRgb(255,221,153)))
