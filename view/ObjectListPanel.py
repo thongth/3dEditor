@@ -1,5 +1,6 @@
 
 from PySide2.QtWidgets import (QHBoxLayout, QWidget, QListWidget)
+from PySide2.QtCore import Qt
 
 class ObjectListPanel(QWidget):
     def __init__ (self, onObjectSelected, parent=None):
@@ -16,3 +17,13 @@ class ObjectListPanel(QWidget):
     def updateList(self, objects):
         self.objectList.clear()
         self.objectList.addItems([s.name for s in objects])
+
+    def selectItem(self, text):
+        toSelectItem = self.findItemByText(text)
+        print('toSelectItem', toSelectItem)
+        if toSelectItem != None:
+            self.objectList.setCurrentItem(toSelectItem[0])
+
+    def findItemByText(self, text):
+        print(text)
+        return self.objectList.findItems(text, Qt.MatchExactly)

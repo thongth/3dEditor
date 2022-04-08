@@ -14,11 +14,13 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super(MainWindow, self).__init__()
 
-# model = new model
         self.objects = []
         self.selectedObject = None
         self.maxObjectNumber = 0
 
+        self.renderWindow()
+
+    def renderWindow(self):
         self.setWindowTitle("3d Editor")
 
         self.threeDViewer = ThreeDViewer()
@@ -57,28 +59,44 @@ class MainWindow(QMainWindow):
         self.addSphere()
         self.threeDViewer.setRootEntity(self.rootEntity)
 
-    def addSphere(self, radius=3):
-        sphere = Sphere(self.rootEntity, 'sphere' + str(self.maxObjectNumber), radius)
-        self.objects.append(sphere)
+    def onObjectNameChange(self, newName):
         self.objectListPanel.updateList(self.objects)
+        self.objectListPanel.selectItem(newName)
+
+    def updateListPanel(self):
+        self.objectListPanel.updateList(self.objects)
+
+    def addSphere(self, radius=3):
+        sphere = Sphere(self.rootEntity, 'sphere' + str(self.maxObjectNumber), radius, self.onObjectNameChange)
+        self.objects.append(sphere)
+        self.updateListPanel()
         self.maxObjectNumber += 1
 
     def removeObject(self):
-        toRemove = self.getIndexFromObjectName(self.selectedObject)
+        toRemove = self.getSelectedObjectIndex()
         if toRemove != -1:
             self.objects[toRemove].setParent(None)
             self.objects.pop(toRemove)
-            self.selectedObject = None
+            self.selectObject(None)
             self.objectListPanel.updateList(self.objects)
         print('pop', toRemove)
 
     def selectObject(self, selectedObject):
         print(selectedObject)
         self.selectedObject = selectedObject
+        self.objectInfoPanel.setSelectedObject(self.getSelectedObject())
 
-    def getIndexFromObjectName(self, name):
+    def getSelectedObject(self):
+        index = self.getSelectedObjectIndex()
+        if index == -1: return None
+        return self.objects[index]
+
+    def getSelectedObjectIndex(self):
+        return self.findIndexFromObjectName(self.selectedObject)
+
+    def findIndexFromObjectName(self, name):
         for index, object in enumerate(self.objects):
-            if object and self.selectedObject == object.name:
+            if object and name == object.name:
                 return index
         return -1
 

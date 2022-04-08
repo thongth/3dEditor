@@ -4,50 +4,68 @@ from PySide2.QtCore import Qt
 class ObjectInfoPanel(QWidget):
     def __init__(self, parent=None):
         super(ObjectInfoPanel, self).__init__(parent)
+        self.selectedObject = None
         layout = QVBoxLayout()
         layout.setContentsMargins(0,0,0,0)
 
         # Name
-        nameLayout = QHBoxLayout()
-        nameLabel = QLabel("Name")
-        nameInput = QLineEdit()
-        nameLayout.addWidget(nameLabel)
-        nameLayout.addWidget(nameInput)
+        self.nameLayout = QHBoxLayout()
+        self.nameLabel = QLabel("Name")
+        self.nameInput = QLineEdit()
+        self.nameInput.textEdited.connect(self.onNameChange)
+        self.nameLayout.addWidget(self.nameLabel)
+        self.nameLayout.addWidget(self.nameInput)
 
         # Translation
-        translationLayout = QHBoxLayout()
-        translationLabel = QLabel("Translation")
-        translationInputX = QLineEdit()
-        translationInputY = QLineEdit()
-        translationInputZ = QLineEdit()
-        translationLayout.addWidget(translationLabel)
-        translationLayout.addWidget(translationInputX)
-        translationLayout.addWidget(translationInputY)
-        translationLayout.addWidget(translationInputZ)
+        self.translationLayout = QHBoxLayout()
+        self.translationLabel = QLabel("Translation")
+        self.translationInputX = QLineEdit()
+        self.translationInputY = QLineEdit()
+        self.translationInputZ = QLineEdit()
+        self.translationLayout.addWidget(self.translationLabel)
+        self.translationLayout.addWidget(self.translationInputX)
+        self.translationLayout.addWidget(self.translationInputY)
+        self.translationLayout.addWidget(self.translationInputZ)
 
         # Translation
-        orientationLayout = QHBoxLayout()
-        orientationLabel = QLabel("Orientation")
-        orientationInputR = QLineEdit()
-        orientationInputP = QLineEdit()
-        orientationInputY = QLineEdit()
-        orientationLayout.addWidget(orientationLabel)
-        orientationLayout.addWidget(orientationInputR)
-        orientationLayout.addWidget(orientationInputP)
-        orientationLayout.addWidget(orientationInputY)
+        self.orientationLayout = QHBoxLayout()
+        self.orientationLabel = QLabel("Orientation")
+        self.orientationInputR = QLineEdit()
+        self.orientationInputP = QLineEdit()
+        self.orientationInputY = QLineEdit()
+        self.orientationLayout.addWidget(self.orientationLabel)
+        self.orientationLayout.addWidget(self.orientationInputR)
+        self.orientationLayout.addWidget(self.orientationInputP)
+        self.orientationLayout.addWidget(self.orientationInputY)
 
         # Radius
-        radiusLayout = QHBoxLayout()
-        radiusLabel = QLabel("Radius")
-        radiusInput = QSlider(Qt.Horizontal)
-        radiusInput.setMinimum(1)
-        radiusInput.setMaximum(10)
-        radiusLayout.addWidget(radiusLabel)
-        radiusLayout.addWidget(radiusInput)
+        self.radiusLayout = QHBoxLayout()
+        self.radiusLabel = QLabel("Radius")
+        self.radiusInput = QSlider(Qt.Horizontal)
+        self.radiusInput.setMinimum(1)
+        self.radiusInput.setMaximum(10)
+        self.radiusLayout.addWidget(self.radiusLabel)
+        self.radiusLayout.addWidget(self.radiusInput)
 
-        layout.addLayout(nameLayout)
-        layout.addLayout(translationLayout)
-        layout.addLayout(orientationLayout)
-        layout.addLayout(radiusLayout)
+        layout.addLayout(self.nameLayout)
+        layout.addLayout(self.translationLayout)
+        layout.addLayout(self.orientationLayout)
+        layout.addLayout(self.radiusLayout)
 
         self.setLayout(layout)
+
+    def setSelectedObject(self, selectedObject):
+        self.selectedObject = selectedObject
+        self.setPlaceHolder(self.selectedObject)
+
+    def setPlaceHolder(self, object):
+        if object == None:
+            self.setBlank()
+            return
+        self.nameInput.setText(object.name)
+
+    def setBlank(self):
+        self.nameInput.setText('')
+
+    def onNameChange(self, s):
+        self.selectedObject.updateName(s)
