@@ -43,5 +43,11 @@ class ThreeDObject():
     def setOrientation(self, r, p, y):
         self.transform.setRotation(QQuaternion.fromEulerAngles(p, y, r))
 
+    def getColor(self):
+        return self.material.diffuse().getRgb()
+
+    def setColor(self, r, g, b):
+        self.material.setDiffuse(QColor(qRgb(r, g, b)))
+
     def __str__(self):
         return self.name

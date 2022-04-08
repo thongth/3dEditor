@@ -30,7 +30,7 @@ class ObjectInfoPanel(QWidget):
         self.translationLayout.addWidget(self.translationInputY)
         self.translationLayout.addWidget(self.translationInputZ)
 
-        # Translation
+        # Orientation
         self.orientationLayout = QHBoxLayout()
         self.orientationLabel = QLabel("Orientation")
         self.orientationInputR = QLineEdit()
@@ -43,6 +43,36 @@ class ObjectInfoPanel(QWidget):
         self.orientationLayout.addWidget(self.orientationInputR)
         self.orientationLayout.addWidget(self.orientationInputP)
         self.orientationLayout.addWidget(self.orientationInputY)
+
+        # Red color
+        self.redLayout = QHBoxLayout()
+        self.redLabel = QLabel("R")
+        self.redInput = QSlider(Qt.Horizontal)
+        self.redInput.setMinimum(1)
+        self.redInput.setMaximum(255)
+        self.redInput.sliderMoved.connect(self.onColorChange)
+        self.redLayout.addWidget(self.redLabel)
+        self.redLayout.addWidget(self.redInput)
+
+        # Green color
+        self.greenLayout = QHBoxLayout()
+        self.greenLabel = QLabel("G")
+        self.greenInput = QSlider(Qt.Horizontal)
+        self.greenInput.setMinimum(1)
+        self.greenInput.setMaximum(255)
+        self.greenInput.sliderMoved.connect(self.onColorChange)
+        self.greenLayout.addWidget(self.greenLabel)
+        self.greenLayout.addWidget(self.greenInput)
+
+        # Blue
+        self.blueLayout = QHBoxLayout()
+        self.blueLabel = QLabel("B")
+        self.blueInput = QSlider(Qt.Horizontal)
+        self.blueInput.setMinimum(1)
+        self.blueInput.setMaximum(255)
+        self.blueInput.sliderMoved.connect(self.onColorChange)
+        self.blueLayout.addWidget(self.blueLabel)
+        self.blueLayout.addWidget(self.blueInput)
 
         # Radius
         self.radiusLayout = QHBoxLayout()
@@ -57,6 +87,9 @@ class ObjectInfoPanel(QWidget):
         layout.addLayout(self.nameLayout)
         layout.addLayout(self.translationLayout)
         layout.addLayout(self.orientationLayout)
+        layout.addLayout(self.redLayout)
+        layout.addLayout(self.greenLayout)
+        layout.addLayout(self.blueLayout)
         layout.addLayout(self.radiusLayout)
 
         self.setLayout(layout)
@@ -78,6 +111,10 @@ class ObjectInfoPanel(QWidget):
         self.orientationInputY.setText(str(rY))
         self.orientationInputR.setText(str(rZ))
         self.radiusInput.setValue(int(object.getRadius()))
+        (r, g, b, a) = object.getColor()
+        self.redInput.setValue(int(r))
+        self.greenInput.setValue(int(g))
+        self.blueInput.setValue(int(b))
 
     def setBlank(self):
         self.nameInput.setText('')
@@ -97,3 +134,6 @@ class ObjectInfoPanel(QWidget):
 
     def onRadiusChange(self, r):
         self.selectedObject.setRadius(r)
+
+    def onColorChange(self, c):
+        self.selectedObject.setColor(self.redInput.value(), self.greenInput.value(), self.blueInput.value())
