@@ -31,7 +31,6 @@ class ThreeDViewer(Qt3DExtras.Qt3DWindow):
         self.camController.setLinearSpeed(50)
         self.camController.setLookSpeed(180)
         self.camController.setCamera(self.camera())
-        self.sphere = Sphere(self.rootEntity, 'sphere1', 3)
         self.setRootEntity(self.rootEntity)
 
 
@@ -40,13 +39,14 @@ class ObjectListPanel(QWidget):
         super(ObjectListPanel, self).__init__(parent)
 
         self.objectList = QListWidget()
-
-        self.objectList.addItems(['h2ll','123'])
-
         layout = QHBoxLayout()
         layout.setContentsMargins(0,0,0,0)
         layout.addWidget(self.objectList)
         self.setLayout(layout)
+
+    def updateList(self, objects):
+        self.objectList.reset()
+        self.objectList.addItems([s.name for s in objects])
 
 class ObjectInfoPanel(QWidget):
     def __init__(self, parent=None):
@@ -73,6 +73,7 @@ class Sphere(ThreeDObject):
         self.sphereMesh.setRadius(self.radius)
 
         self.material = Qt3DExtras.QPhongMaterial(self.rootEntity)
+        self.material.setDiffuse(QColor(qRgb(102,224,255)))
 
         self.sphereTransform = Qt3DCore.QTransform()
         self.sphereEntity.addComponent(self.sphereTransform)
@@ -99,18 +100,16 @@ class MainWindow(QMainWindow):
         self.objects = []
 
         appLayout = QHBoxLayout()
+        configLayout = QVBoxLayout()
+
+        self.objectListPanel = ObjectListPanel()
+        self.objectInfoPanel = ObjectInfoPanel()
+
+        configLayout.addWidget(self.objectListPanel)
+        configLayout.addWidget(self.objectInfoPanel)
+
         appLayout.addWidget(self.container)
-        # configLayout = QVBoxLayout()
-
-        # self.threeDViewer = ThreeDViewer()
-        # self.objectListPanel = ObjectListPanel()
-        # self.objectInfoPanel = ObjectInfoPanel()
-
-        # configLayout.addWidget(self.objectListPanel)
-        # configLayout.addWidget(self.objectInfoPanel)
-
-        # appLayout.addWidget(self.threeDViewer)
-        # appLayout.addLayout(configLayout)
+        appLayout.addLayout(configLayout)
 
         widget = QWidget()
         widget.setLayout(appLayout)
@@ -118,6 +117,7 @@ class MainWindow(QMainWindow):
         
         sphere = Sphere(self.rootEntity, 'sphere1', 3)
         self.objects.append(sphere)
+        self.objectListPanel.updateList(self.objects)
 
         self.threeDViewer.setRootEntity(self.rootEntity)
 
@@ -139,5 +139,6 @@ class MainWindow(QMainWindow):
 
 app = QApplication(sys.argv)
 w = MainWindow()
+w.resize(1500, 800)
 w.show()
 app.exec_()
