@@ -20,7 +20,9 @@ class ThreeDObject():
 
         # Picker
         self.picker = Qt3DRender.QObjectPicker(self.rootEntity)
+        self.picker.setDragEnabled(True)
         self.picker.clicked.connect(self.onPickerClick)
+        self.picker.moved.connect(self.onPickerMove)
 
         self.transform = Qt3DCore.QTransform()
         self.entity.addComponent(self.transform)
@@ -68,6 +70,9 @@ class ThreeDObject():
     
     def onPickerClick(self, p):
         if self.onSelect != None: self.onSelect(self.name)
+
+    def onPickerMove(self, p):
+        self.setTranslation(p.worldIntersection().x(), p.worldIntersection().y(), p.worldIntersection().z())
 
     def __str__(self):
         return self.name

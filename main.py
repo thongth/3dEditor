@@ -71,14 +71,14 @@ class MainWindow(QMainWindow):
         if name == None: 
             name = 'sphere' + str(self.maxObjectNumber)
             self.maxObjectNumber += 1
-        sphere = Sphere(self.rootEntity, name, self.onObjectNameChange, loadMode, self.saveData, self.selectObject)
+        sphere = Sphere(self.rootEntity, name, self.onObjectNameChange, loadMode, self.saveData, self.setSelectedObject)
         self.updateMeshOnScreen(sphere, loadMode)
 
     def addBox(self, name=None, loadMode=False):
         if name == None: 
             name = 'box' + str(self.maxObjectNumber)
             self.maxObjectNumber += 1
-        box = Box(self.rootEntity, name, self.onObjectNameChange, loadMode, self.saveData, self.selectObject)
+        box = Box(self.rootEntity, name, self.onObjectNameChange, loadMode, self.saveData, self.setSelectedObject)
         self.updateMeshOnScreen(box, loadMode)
 
     def updateMeshOnScreen(self, mesh, loadMode=False):
@@ -95,6 +95,10 @@ class MainWindow(QMainWindow):
             self.objectListPanel.updateList(self.objects)
         self.saveData()
         print('pop', toRemove)
+
+    def setSelectedObject(self, selectedObject):
+        self.objectListPanel.selectItem(selectedObject)
+        self.selectObject(selectedObject)
 
     def selectObject(self, selectedObject):
         print(selectedObject)
@@ -171,7 +175,7 @@ class MainWindow(QMainWindow):
                     self.objects[-1].setRadius(o['size'])
                 self.objects[-1].updateName(o['name'])
                 self.objects[-1].setTranslation(o['translation'][0], o['translation'][1], o['translation'][2])
-                self.objects[-1].setOrientation(o['orientation'][0], o['orientation'][1], o['orientation'][2])
+                self.objects[-1].setOrientation(o['orientation'][2], o['orientation'][0], o['orientation'][1])
                 self.objects[-1].setColor(o['color'][0], o['color'][1], o['color'][2])
         self.selectedObject = None
 
