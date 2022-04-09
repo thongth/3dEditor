@@ -113,13 +113,13 @@ class MainWindow(QMainWindow):
         object = self.getSelectedObject()
         boxVisibility = isinstance(object, Box)
         sphereVisibility = isinstance(object, Sphere)
+        self.objectInfoPanelBox.setVisible(isinstance(object, Box))
         if self.objectInfoPanelBox.isVisible() != boxVisibility:
             print('0')
-            self.objectInfoPanelBox.setVisible(isinstance(object, Box))
             self.objectInfoPanelBox.focusNameInput()
+        self.objectInfoPanelSphere.setVisible(isinstance(object, Sphere))
         if self.objectInfoPanelSphere.isVisible() != sphereVisibility:
             print('1')
-            self.objectInfoPanelSphere.setVisible(isinstance(object, Sphere))
             self.objectInfoPanelSphere.focusNameInput()
 
     def getSelectedObject(self):
