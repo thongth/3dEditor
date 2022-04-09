@@ -1,4 +1,4 @@
-from PySide2.QtWidgets import QVBoxLayout, QHBoxLayout, QWidget, QLabel, QLineEdit, QSlider
+from PySide2.QtWidgets import QHBoxLayout, QLabel, QSlider
 from PySide2.QtCore import Qt
 
 from object3d.Sphere import Sphere
