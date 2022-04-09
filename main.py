@@ -2,8 +2,9 @@ import sys
 
 from PySide2.QtWidgets import (QApplication, QMainWindow, QHBoxLayout, QVBoxLayout, QWidget, QPushButton)
 
-from view import (ThreeDViewer, ObjectListPanel, ObjectInfoPanel)
+from view import (ThreeDViewer, ObjectListPanel, ObjectInfoPanelBox, ObjectInfoPanelSphere)
 from object3d import (Sphere, Box)
+
 class MainWindow(QMainWindow):
     def __init__(self):
         super(MainWindow, self).__init__()
@@ -34,7 +35,10 @@ class MainWindow(QMainWindow):
         self.removeObjectButton.clicked.connect(self.removeObject)
 
         self.objectListPanel = ObjectListPanel(self.selectObject)
-        self.objectInfoPanel = ObjectInfoPanel()
+        self.objectInfoPanelBox = ObjectInfoPanelBox()
+        self.objectInfoPanelSphere = ObjectInfoPanelSphere()
+        self.objectInfoPanelBox.setVisible(False)
+        self.objectInfoPanelSphere.setVisible(False)
 
         buttonBar.addWidget(self.newSphereButton)
         buttonBar.addWidget(self.newBoxButton)
@@ -42,7 +46,8 @@ class MainWindow(QMainWindow):
 
         configLayout.addLayout(buttonBar)
         configLayout.addWidget(self.objectListPanel)
-        configLayout.addWidget(self.objectInfoPanel)
+        configLayout.addWidget(self.objectInfoPanelBox)
+        configLayout.addWidget(self.objectInfoPanelSphere)
 
         appLayout.addWidget(self.container)
         appLayout.addLayout(configLayout)
@@ -87,7 +92,28 @@ class MainWindow(QMainWindow):
     def selectObject(self, selectedObject):
         print(selectedObject)
         self.selectedObject = selectedObject
-        self.objectInfoPanel.setSelectedObject(self.getSelectedObject())
+        self.setObjectInfoPanel()
+
+    def setObjectInfoPanel(self):
+        object = self.getSelectedObject()
+        if isinstance(object, Box):
+            self.objectInfoPanelBox.setSelectedObject(self.getSelectedObject())
+        else:
+            self.objectInfoPanelSphere.setSelectedObject(self.getSelectedObject())
+        self.setVisibilityBasedOnSelectedObject()
+
+    def setVisibilityBasedOnSelectedObject(self):
+        object = self.getSelectedObject()
+        boxVisibility = isinstance(object, Box)
+        sphereVisibility = isinstance(object, Sphere)
+        if self.objectInfoPanelBox.isVisible() != boxVisibility:
+            print('0')
+            self.objectInfoPanelBox.setVisible(isinstance(object, Box))
+            self.objectInfoPanelBox.focusNameInput()
+        if self.objectInfoPanelSphere.isVisible() != sphereVisibility:
+            print('1')
+            self.objectInfoPanelSphere.setVisible(isinstance(object, Sphere))
+            self.objectInfoPanelSphere.focusNameInput()
 
     def getSelectedObject(self):
         index = self.getSelectedObjectIndex()

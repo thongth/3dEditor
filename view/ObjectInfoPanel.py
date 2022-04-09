@@ -5,8 +5,8 @@ class ObjectInfoPanel(QWidget):
     def __init__(self, parent=None):
         super(ObjectInfoPanel, self).__init__(parent)
         self.selectedObject = None
-        layout = QVBoxLayout()
-        layout.setContentsMargins(0,0,0,0)
+        self.layout = QVBoxLayout()
+        self.layout.setContentsMargins(0,0,0,0)
 
         # Name
         self.nameLayout = QHBoxLayout()
@@ -74,25 +74,16 @@ class ObjectInfoPanel(QWidget):
         self.blueLayout.addWidget(self.blueLabel)
         self.blueLayout.addWidget(self.blueInput)
 
-        # Radius
-        self.radiusLayout = QHBoxLayout()
-        self.radiusLabel = QLabel("Radius")
-        self.radiusInput = QSlider(Qt.Horizontal)
-        self.radiusInput.setMinimum(1)
-        self.radiusInput.setMaximum(10)
-        self.radiusInput.sliderMoved.connect(self.onRadiusChange)
-        self.radiusLayout.addWidget(self.radiusLabel)
-        self.radiusLayout.addWidget(self.radiusInput)
+        self.layout.addLayout(self.nameLayout)
+        self.layout.addLayout(self.translationLayout)
+        self.layout.addLayout(self.orientationLayout)
+        self.layout.addLayout(self.redLayout)
+        self.layout.addLayout(self.greenLayout)
+        self.layout.addLayout(self.blueLayout)
 
-        layout.addLayout(self.nameLayout)
-        layout.addLayout(self.translationLayout)
-        layout.addLayout(self.orientationLayout)
-        layout.addLayout(self.redLayout)
-        layout.addLayout(self.greenLayout)
-        layout.addLayout(self.blueLayout)
-        layout.addLayout(self.radiusLayout)
+        self.setLayout(self.layout)
 
-        self.setLayout(layout)
+        self.focusNameInput()
 
     def setSelectedObject(self, selectedObject):
         self.selectedObject = selectedObject
@@ -102,19 +93,29 @@ class ObjectInfoPanel(QWidget):
         if object == None:
             self.setBlank()
             return
+
+        # Set name
         self.nameInput.setText(object.name)
+
+        # Set translation
         self.translationInputX.setText(str(object.getTranslation().x()))
         self.translationInputY.setText(str(object.getTranslation().y()))
         self.translationInputZ.setText(str(object.getTranslation().z()))
+
+        # Set orientation
         [rX, rY, rZ] = object.getOrientation()
         self.orientationInputP.setText(str(rX))
         self.orientationInputY.setText(str(rY))
         self.orientationInputR.setText(str(rZ))
-        self.radiusInput.setValue(int(object.getRadius()))
+
+        # Set color
         (r, g, b, a) = object.getColor()
         self.redInput.setValue(int(r))
         self.greenInput.setValue(int(g))
         self.blueInput.setValue(int(b))
+
+        # Set other
+        self.setOther(object)
 
     def setBlank(self):
         self.nameInput.setText('')
@@ -132,8 +133,11 @@ class ObjectInfoPanel(QWidget):
                                         float(self.orientationInputP.text()),
                                         float(self.orientationInputY.text()))
 
-    def onRadiusChange(self, r):
-        self.selectedObject.setRadius(r)
-
     def onColorChange(self, c):
         self.selectedObject.setColor(self.redInput.value(), self.greenInput.value(), self.blueInput.value())
+
+    def focusNameInput(self):
+        self.nameInput.setFocus()
+
+    def setOther(self, object):
+        pass
