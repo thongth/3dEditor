@@ -3,12 +3,14 @@ import random
 from PySide2.QtGui import (QVector3D, QColor, QQuaternion, qRgb)
 from PySide2.Qt3DExtras import (Qt3DExtras)
 from PySide2.Qt3DCore import (Qt3DCore)
+from PySide2.Qt3DRender import (Qt3DRender)
 
 class ThreeDObject():
-    def __init__(self, name, rootEntity, onNameChange=None, nonRandom=False, onSave=None):
+    def __init__(self, name, rootEntity, onNameChange=None, nonRandom=False, onSave=None, onSelect=None):
         self.name = name
         self.onNameChange = onNameChange
         self.onSave = onSave
+        self.onSelect = onSelect
         self.rootEntity = rootEntity
 
         self.entity = Qt3DCore.QEntity(self.rootEntity)
@@ -16,12 +18,17 @@ class ThreeDObject():
         self.material = Qt3DExtras.QPhongMaterial(self.rootEntity)
         self.material.setDiffuse(QColor(qRgb(102,224,255)))
 
+        # Picker
+        self.picker = Qt3DRender.QObjectPicker(self.rootEntity)
+        self.picker.clicked.connect(self.onPickerClick)
+
         self.transform = Qt3DCore.QTransform()
         self.entity.addComponent(self.transform)
         if not nonRandom:
             self.transform.setTranslation(QVector3D(random.random()*10, random.random()*10, 1))
 
         self.entity.addComponent(self.material)
+        self.entity.addComponent(self.picker)
 
     def setPosition(self, x, y, z):
         self.transform.setTranslation(QVector3D(x, y, z))
@@ -58,6 +65,9 @@ class ThreeDObject():
 
     def saveValue(self):
         if self.onSave != None: self.onSave()
+    
+    def onPickerClick(self, p):
+        if self.onSelect != None: self.onSelect(self.name)
 
     def __str__(self):
         return self.name

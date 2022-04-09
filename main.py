@@ -71,14 +71,14 @@ class MainWindow(QMainWindow):
         if name == None: 
             name = 'sphere' + str(self.maxObjectNumber)
             self.maxObjectNumber += 1
-        sphere = Sphere(self.rootEntity, name, self.onObjectNameChange, loadMode, self.saveData)
+        sphere = Sphere(self.rootEntity, name, self.onObjectNameChange, loadMode, self.saveData, self.selectObject)
         self.updateMeshOnScreen(sphere, loadMode)
 
     def addBox(self, name=None, loadMode=False):
         if name == None: 
             name = 'box' + str(self.maxObjectNumber)
             self.maxObjectNumber += 1
-        box = Box(self.rootEntity, name, self.onObjectNameChange, loadMode, self.saveData)
+        box = Box(self.rootEntity, name, self.onObjectNameChange, loadMode, self.saveData, self.selectObject)
         self.updateMeshOnScreen(box, loadMode)
 
     def updateMeshOnScreen(self, mesh, loadMode=False):
@@ -113,13 +113,13 @@ class MainWindow(QMainWindow):
         object = self.getSelectedObject()
         boxVisibility = isinstance(object, Box)
         sphereVisibility = isinstance(object, Sphere)
-        self.objectInfoPanelBox.setVisible(isinstance(object, Box))
         if self.objectInfoPanelBox.isVisible() != boxVisibility:
             print('0')
+            self.objectInfoPanelBox.setVisible(isinstance(object, Box))
             self.objectInfoPanelBox.focusNameInput()
-        self.objectInfoPanelSphere.setVisible(isinstance(object, Sphere))
         if self.objectInfoPanelSphere.isVisible() != sphereVisibility:
             print('1')
+            self.objectInfoPanelSphere.setVisible(isinstance(object, Sphere))
             self.objectInfoPanelSphere.focusNameInput()
 
     def getSelectedObject(self):
