@@ -15,6 +15,6 @@ class Sphere(ThreeDObject):
     def getRadius(self):
         return self.sphereMesh.radius()
 
-    def setRadius(self, r):
+    def setRadius(self, r: int):
         self.sphereMesh.setRadius(r)
         self.saveValue()

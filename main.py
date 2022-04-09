@@ -1,6 +1,7 @@
 import sys
 
 from PySide2.QtWidgets import (QApplication, QMainWindow, QHBoxLayout, QVBoxLayout, QWidget, QPushButton)
+from object3d.ThreeDObject import ThreeDObject
 
 from view import (ThreeDViewer, ObjectListPanel, ObjectInfoPanelBox, ObjectInfoPanelSphere)
 from object3d import (Sphere, Box)
@@ -60,28 +61,28 @@ class MainWindow(QMainWindow):
         
         self.threeDViewer.setRootEntity(self.rootEntity)
 
-    def onObjectNameChange(self, newName):
+    def onObjectNameChange(self, newName: str):
         self.objectListPanel.updateList(self.objects)
         self.objectListPanel.selectItem(newName)
 
     def updateListPanel(self):
         self.objectListPanel.updateList(self.objects)
 
-    def addSphere(self, name=None, loadMode=False):
+    def addSphere(self, name:str=None, loadMode:bool=False):
         if name == None: 
             name = 'sphere' + str(self.maxObjectNumber)
             self.maxObjectNumber += 1
         sphere = Sphere(self.rootEntity, name, self.onObjectNameChange, loadMode, self.saveData, self.setSelectedObject)
         self.updateMeshOnScreen(sphere, loadMode)
 
-    def addBox(self, name=None, loadMode=False):
+    def addBox(self, name:str=None, loadMode:bool=False):
         if name == None: 
             name = 'box' + str(self.maxObjectNumber)
             self.maxObjectNumber += 1
         box = Box(self.rootEntity, name, self.onObjectNameChange, loadMode, self.saveData, self.setSelectedObject)
         self.updateMeshOnScreen(box, loadMode)
 
-    def updateMeshOnScreen(self, mesh, loadMode=False):
+    def updateMeshOnScreen(self, mesh: ThreeDObject, loadMode: bool=False):
         self.objects.append(mesh)
         self.updateListPanel()
         if not loadMode: self.saveData()
@@ -96,11 +97,11 @@ class MainWindow(QMainWindow):
         self.saveData()
         print('pop', toRemove)
 
-    def setSelectedObject(self, selectedObject):
+    def setSelectedObject(self, selectedObject: str):
         self.objectListPanel.selectItem(selectedObject)
         self.selectObject(selectedObject)
 
-    def selectObject(self, selectedObject):
+    def selectObject(self, selectedObject: str):
         print(selectedObject)
         self.selectedObject = selectedObject
         self.setObjectInfoPanel()
@@ -134,7 +135,7 @@ class MainWindow(QMainWindow):
     def getSelectedObjectIndex(self):
         return self.findIndexFromObjectName(self.selectedObject)
 
-    def findIndexFromObjectName(self, name):
+    def findIndexFromObjectName(self, name:str):
         for index, object in enumerate(self.objects):
             if object and name == object.name:
                 return index

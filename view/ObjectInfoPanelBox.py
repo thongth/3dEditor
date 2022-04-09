@@ -45,16 +45,16 @@ class ObjectInfoPanelBox(ObjectInfoPanel):
 
         self.setLayout(self.layout)
 
-    def onWidthChange(self, w):
+    def onWidthChange(self, w: int):
         self.selectedObject.setWidth(w)
         
-    def onHeightChange(self, h):
+    def onHeightChange(self, h: int):
         self.selectedObject.setHeight(h)
         
-    def onDepthChange(self, d):
+    def onDepthChange(self, d: int):
         self.selectedObject.setDepth(d)
 
-    def setOther(self, object):
+    def setOther(self, object: Box):
         if isinstance(object, Box):
             (x, y, z) = object.getSize()
             self.widthInput.setValue(int(x))

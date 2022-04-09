@@ -32,13 +32,13 @@ class ThreeDObject():
         self.entity.addComponent(self.material)
         self.entity.addComponent(self.picker)
 
-    def setPosition(self, x, y, z):
+    def setPosition(self, x: float, y: float, z: float):
         self.transform.setTranslation(QVector3D(x, y, z))
 
     def setParent(self, parent=None):
         self.entity.setParent(parent)
 
-    def updateName(self, name):
+    def updateName(self, name: str):
         self.name = name
         if self.onNameChange != None: 
             self.onNameChange(name)
@@ -47,21 +47,21 @@ class ThreeDObject():
     def getTranslation(self):
         return self.transform.translation()
 
-    def setTranslation(self, x, y, z):
+    def setTranslation(self, x: float, y: float, z: float):
         self.transform.setTranslation(QVector3D(x, y, z))
         self.saveValue()
 
     def getOrientation(self):
         return [self.transform.rotationX(), self.transform.rotationY(), self.transform.rotationZ()]
 
-    def setOrientation(self, r, p, y):
+    def setOrientation(self, r: float, p: float, y: float):
         self.transform.setRotation(QQuaternion.fromEulerAngles(p, y, r))
         self.saveValue()
 
     def getColor(self):
         return self.material.diffuse().getRgb()
 
-    def setColor(self, r, g, b):
+    def setColor(self, r: int, g: int, b: int):
         self.material.setDiffuse(QColor(qRgb(r, g, b)))
         self.saveValue()
 

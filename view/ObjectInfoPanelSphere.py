@@ -23,7 +23,7 @@ class ObjectInfoPanelSphere(ObjectInfoPanel):
 
         self.setLayout(self.layout)
 
-    def onRadiusChange(self, r):
+    def onRadiusChange(self, r: int):
         self.selectedObject.setRadius(r)
 
     def setOther(self, object):

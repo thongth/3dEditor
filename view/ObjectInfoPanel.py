@@ -1,6 +1,8 @@
 from PySide2.QtWidgets import QVBoxLayout, QHBoxLayout, QWidget, QLabel, QLineEdit, QSlider
 from PySide2.QtCore import Qt
 
+from object3d.ThreeDObject import ThreeDObject
+
 class ObjectInfoPanel(QWidget):
     def __init__(self, parent=None):
         super(ObjectInfoPanel, self).__init__(parent)
@@ -85,11 +87,11 @@ class ObjectInfoPanel(QWidget):
 
         self.focusNameInput()
 
-    def setSelectedObject(self, selectedObject):
+    def setSelectedObject(self, selectedObject: ThreeDObject):
         self.selectedObject = selectedObject
         self.setPlaceHolder(self.selectedObject)
 
-    def setPlaceHolder(self, object):
+    def setPlaceHolder(self, object: ThreeDObject):
         if object == None:
             self.setBlank()
             return
@@ -120,7 +122,7 @@ class ObjectInfoPanel(QWidget):
     def setBlank(self):
         self.nameInput.setText('')
 
-    def onNameChange(self, s):
+    def onNameChange(self, s: str):
         self.selectedObject.updateName(s)
 
     def onTranslationChange(self, s):

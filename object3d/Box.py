@@ -15,14 +15,14 @@ class Box(ThreeDObject):
     def getSize(self):
         return (self.boxMesh.xExtent(), self.boxMesh.yExtent(), self.boxMesh.zExtent())
 
-    def setWidth(self, w):
+    def setWidth(self, w: int):
         self.boxMesh.setXExtent(w)
         self.saveValue()
 
-    def setHeight(self, h):
+    def setHeight(self, h: int):
         self.boxMesh.setYExtent(h)
         self.saveValue()
 
-    def setDepth(self, d):
+    def setDepth(self, d: int):
         self.boxMesh.setZExtent(d)
         self.saveValue()
