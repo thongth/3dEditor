@@ -4,6 +4,7 @@ from PySide2.QtWidgets import (QApplication, QMainWindow, QHBoxLayout, QVBoxLayo
 
 from view import (ThreeDViewer, ObjectListPanel, ObjectInfoPanelBox, ObjectInfoPanelSphere)
 from object3d import (Sphere, Box)
+from util.LocalStorage import JsonLocalStorage
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -14,6 +15,7 @@ class MainWindow(QMainWindow):
         self.maxObjectNumber = 0
 
         self.renderWindow()
+        self.loadData()
 
     def renderWindow(self):
         self.setWindowTitle("3d Editor")
@@ -56,8 +58,6 @@ class MainWindow(QMainWindow):
         widget.setLayout(appLayout)
         self.setCentralWidget(widget)
         
-        self.addSphere()
-        self.addSphere()
         self.threeDViewer.setRootEntity(self.rootEntity)
 
     def onObjectNameChange(self, newName):
@@ -67,18 +67,24 @@ class MainWindow(QMainWindow):
     def updateListPanel(self):
         self.objectListPanel.updateList(self.objects)
 
-    def addSphere(self):
-        sphere = Sphere(self.rootEntity, 'sphere' + str(self.maxObjectNumber), self.onObjectNameChange)
-        self.updateMeshOnScreen(sphere)
+    def addSphere(self, name=None, loadMode=False):
+        if name == None: 
+            name = 'sphere' + str(self.maxObjectNumber)
+            self.maxObjectNumber += 1
+        sphere = Sphere(self.rootEntity, name, self.onObjectNameChange, loadMode, self.saveData)
+        self.updateMeshOnScreen(sphere, loadMode)
 
-    def addBox(self):
-        box = Box(self.rootEntity, 'box' + str(self.maxObjectNumber), self.onObjectNameChange)
-        self.updateMeshOnScreen(box)
+    def addBox(self, name=None, loadMode=False):
+        if name == None: 
+            name = 'box' + str(self.maxObjectNumber)
+            self.maxObjectNumber += 1
+        box = Box(self.rootEntity, name, self.onObjectNameChange, loadMode, self.saveData)
+        self.updateMeshOnScreen(box, loadMode)
 
-    def updateMeshOnScreen(self, mesh):
+    def updateMeshOnScreen(self, mesh, loadMode=False):
         self.objects.append(mesh)
         self.updateListPanel()
-        self.maxObjectNumber += 1
+        if not loadMode: self.saveData()
 
     def removeObject(self):
         toRemove = self.getSelectedObjectIndex()
@@ -87,6 +93,7 @@ class MainWindow(QMainWindow):
             self.objects.pop(toRemove)
             self.selectObject(None)
             self.objectListPanel.updateList(self.objects)
+        self.saveData()
         print('pop', toRemove)
 
     def selectObject(self, selectedObject):
@@ -128,6 +135,45 @@ class MainWindow(QMainWindow):
             if object and name == object.name:
                 return index
         return -1
+
+    def saveData(self):
+        data = {}
+        objectList = []
+        data['maxObjectNumber'] = self.maxObjectNumber
+        for o in self.objects:
+            objectData = {}
+            objectData['name'] = o.name
+            objectData['orientation'] = o.getOrientation()
+            objectData['translation'] = [o.getTranslation().x(), o.getTranslation().y(), o.getTranslation().z()]
+            objectData['color'] = o.getColor()
+            if isinstance(o, Box):
+                objectData['type'] = 'BOX'
+                objectData['size'] = o.getSize()
+            elif isinstance(o, Sphere):
+                objectData['type'] = 'SPHERE'
+                objectData['size'] = o.getRadius()
+            objectList.append(objectData)
+        data['objects'] = objectList
+        JsonLocalStorage.saveLatest(data)
+
+    def loadData(self):
+        data = JsonLocalStorage.loadLatest()
+        if data:
+            self.maxObjectNumber = data['maxObjectNumber']
+            for o in data['objects']:
+                if o['type'] == "BOX":
+                    self.addBox(o['name'], True)
+                    self.objects[-1].setWidth(o['size'][0])
+                    self.objects[-1].setHeight(o['size'][1])
+                    self.objects[-1].setDepth(o['size'][2])
+                else:
+                    self.addSphere(o['name'], True)
+                    self.objects[-1].setRadius(o['size'])
+                self.objects[-1].updateName(o['name'])
+                self.objects[-1].setTranslation(o['translation'][0], o['translation'][1], o['translation'][2])
+                self.objects[-1].setOrientation(o['orientation'][0], o['orientation'][1], o['orientation'][2])
+                self.objects[-1].setColor(o['color'][0], o['color'][1], o['color'][2])
+        self.selectedObject = None
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
